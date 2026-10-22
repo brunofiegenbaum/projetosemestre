@@ -63,7 +63,7 @@ $veiculos = $veiculoDAO->listar($busca, $min, $max, $categoria, $ordem, $cidade)
     <link rel="stylesheet" href="style.css">
     <script defer src="script.js"></script>
 </head>
-<body>
+<body data-salvos="<?php echo $salvos ? '1' : '0'; ?>">
     <header class="topbar">
         <div class="topbar-left">
             <a href="index.php" class="brand-icon" aria-label="Página inicial">BJ</a>
@@ -153,7 +153,7 @@ $veiculos = $veiculoDAO->listar($busca, $min, $max, $categoria, $ordem, $cidade)
                     <p class="section-eyebrow">VEÍCULOS À VENDA</p>
                     <h2><?php echo $salvos ? 'Seus anúncios salvos' : ($busca !== "" ? 'Resultados da pesquisa' : 'Sugestões para você'); ?></h2>
                 </div>
-                <span class="listing-total"><?php echo count($veiculos); ?> anúncios</span>
+                <button class="mobile-filter-toggle" type="button" aria-expanded="false">☷ Filtros</button><span class="listing-total"><?php echo count($veiculos); ?> anúncios</span>
             </div>
             <div class="category-scroll" aria-label="Filtrar por categoria">
                 <?php foreach ($categorias as $item) {
