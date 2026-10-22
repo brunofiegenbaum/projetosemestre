@@ -14,6 +14,8 @@ CREATE TABLE IF NOT EXISTS veiculos (
  modelo VARCHAR(50) NOT NULL,
  ano INT NOT NULL,
  preco DECIMAL(10,2) NOT NULL,
+ quilometragem INT NOT NULL DEFAULT 0,
+ foto VARCHAR(255) DEFAULT NULL,
  FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario)
 );
 
