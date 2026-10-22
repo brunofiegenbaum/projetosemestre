@@ -41,7 +41,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $erro = "Escolha um anunciante válido.";
     } elseif ($marca === "" || $modelo === "" || $cidade === "" || $uf === "") {
         $erro = "Preencha os campos obrigatórios.";
-    } elseif (mb_strlen($marca) > 60 || mb_strlen($modelo) > 90 || mb_strlen($cidade) > 80 || mb_strlen($descricao) > 3000) {
+    } elseif (strlen($marca) > 60 || strlen($modelo) > 90 || strlen($cidade) > 80 || strlen($descricao) > 3000) {
         $erro = "Um dos textos ultrapassou o limite permitido.";
     } elseif (!in_array($categoria, $categorias, true)) {
         $erro = "Selecione uma categoria válida.";
