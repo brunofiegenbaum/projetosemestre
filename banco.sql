@@ -17,17 +17,22 @@ CREATE TABLE IF NOT EXISTS veiculos (
  FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario)
 );
 
--- Insira os dados apenas na primeira importacao.
-INSERT INTO usuarios (nome,email) VALUES
-('Bruno','bruno@exemplo.com'),
-('Jean','jean@exemplo.com'),
-('Carlos','carlos@exemplo.com'),
-('Ana','ana@exemplo.com'),
-('Pedro','pedro@exemplo.com');
+-- Limpa somente os veiculos antigos.
+DELETE FROM veiculos;
 
-INSERT INTO veiculos (id_usuario,marca,modelo,ano,preco) VALUES
-(1,'Volkswagen','Gol',2010,25000),
-(2,'Chevrolet','Corsa',2008,19000),
-(3,'Fiat','Uno',2012,23000),
-(4,'Ford','Fiesta',2014,32000),
-(5,'Honda','Civic',2015,65000);
+-- Usuarios de teste para a Sprint 1 (somente se ainda nao houver usuarios).
+INSERT INTO usuarios (nome,email)
+SELECT 'Bruno','bruno@exemplo.com'
+WHERE NOT EXISTS (SELECT 1 FROM usuarios);
+INSERT INTO usuarios (nome,email)
+SELECT 'Jean','jean@exemplo.com'
+WHERE NOT EXISTS (SELECT 1 FROM usuarios WHERE email='jean@exemplo.com');
+INSERT INTO usuarios (nome,email)
+SELECT 'Carlos','carlos@exemplo.com'
+WHERE NOT EXISTS (SELECT 1 FROM usuarios WHERE email='carlos@exemplo.com');
+INSERT INTO usuarios (nome,email)
+SELECT 'Ana','ana@exemplo.com'
+WHERE NOT EXISTS (SELECT 1 FROM usuarios WHERE email='ana@exemplo.com');
+INSERT INTO usuarios (nome,email)
+SELECT 'Pedro','pedro@exemplo.com'
+WHERE NOT EXISTS (SELECT 1 FROM usuarios WHERE email='pedro@exemplo.com');
