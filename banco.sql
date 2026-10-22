@@ -55,7 +55,7 @@ INSERT INTO veiculos
 (3,'Jeep','Renegade Longitude','SUVs',2021,99900,64000,'Bom Retiro do Sul','RS','SUV para o dia a dia, dados fictícios.','https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=900&q=80&auto=format&fit=crop'),
 (4,'Porsche','911 Carrera','Esportivos',2019,679900,28000,'Novo Hamburgo','RS','Carro esportivo de alto desempenho. Anúncio demonstrativo.','https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=900&q=80&auto=format&fit=crop'),
 (5,'Audi','A3 Sedan','Sedãs',2018,112900,88000,'Bento Gonçalves','RS','Sedã moderno, anúncio fictício.','https://images.unsplash.com/photo-1511919884226-fd3cad34687c?w=900&q=80&auto=format&fit=crop'),
-(1,'Fiat','Argo Drive','Hatches',2022,66900,43000,'Garibaldi','RS','Hatch compacto. Anúncio fictício.','https://images.unsplash.com/photo-1566939889291-d9e5b2e9488c?w=900&q=80&auto=format&fit=crop'),
+(1,'Fiat','Argo Drive','Hatches',2022,66900,43000,'Garibaldi','RS','Hatch compacto. Anúncio fictício.','https://images.unsplash.com/photo-1555215695-3004980ad54e?w=900&q=80&auto=format&fit=crop'),
 (2,'Mercedes-Benz','C180','Sedãs',2017,129900,79000,'Porto Alegre','RS','Sedã com visual elegante. Anúncio fictício.','https://images.unsplash.com/photo-1502161254066-6c74afbf7b6f?w=900&q=80&auto=format&fit=crop'),
 (3,'Chevrolet','S10 LTZ','Picapes',2020,169900,102000,'Santa Cruz do Sul','RS','Picape para trabalho e lazer. Anúncio demonstrativo.','https://images.unsplash.com/photo-1489824904134-891ab64532f1?w=900&q=80&auto=format&fit=crop'),
 (4,'Volkswagen','Jetta GLI','Sedãs',2021,179900,49000,'Lajeado','RS','Sedã turbo esportivo. Anúncio demonstrativo.','https://images.unsplash.com/photo-1555215695-3004980ad54e?w=900&q=80&auto=format&fit=crop'),
