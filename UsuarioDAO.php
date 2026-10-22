@@ -1,43 +1,30 @@
 <?php
 class UsuarioDAO {
     private $conexao;
-
-    public function __construct($conexao) {
+    function __construct($conexao) {
         $this->conexao = $conexao;
     }
-
-    public function inserir($nome, $email, $telefone) {
-        $sql = "INSERT INTO usuarios (nome, email, telefone) VALUES (?, ?, ?)";
-        $comando = $this->conexao->prepare($sql);
-        $comando->execute([$nome, $email, $telefone]);
-        return $this->conexao->lastInsertId();
-    }
-
-    public function listar() {
-        $sql = "SELECT * FROM usuarios ORDER BY id_usuario";
+    function listar() {
+        $sql = "SELECT * FROM usuarios";
         $comando = $this->conexao->prepare($sql);
         $comando->execute();
-        return $comando->fetchAll();
+        return $comando->fetchAll(PDO::FETCH_ASSOC);
     }
-
-    public function buscarPorId($id) {
-        $sql = "SELECT * FROM usuarios WHERE id_usuario = ?";
-        $comando = $this->conexao->prepare($sql);
+    function buscarPorId($id) {
+        $comando = $this->conexao->prepare("SELECT * FROM usuarios WHERE id_usuario = ?");
         $comando->execute([$id]);
-        return $comando->fetch();
+        return $comando->fetch(PDO::FETCH_ASSOC);
     }
-
-    public function atualizar($id, $nome, $email, $telefone) {
-        $sql = "UPDATE usuarios SET nome = ?, email = ?, telefone = ? WHERE id_usuario = ?";
-        $comando = $this->conexao->prepare($sql);
-        $comando->execute([$nome, $email, $telefone, $id]);
-        return $comando->rowCount();
+    function inserir($nome, $email) {
+        $comando = $this->conexao->prepare("INSERT INTO usuarios (nome,email) VALUES (?,?)");
+        return $comando->execute([$nome,$email]);
     }
-
-    public function excluir($id) {
-        $sql = "DELETE FROM usuarios WHERE id_usuario = ?";
-        $comando = $this->conexao->prepare($sql);
-        $comando->execute([$id]);
-        return $comando->rowCount();
+    function atualizar($id, $nome, $email) {
+        $comando = $this->conexao->prepare("UPDATE usuarios SET nome=?,email=? WHERE id_usuario=?");
+        return $comando->execute([$nome,$email,$id]);
+    }
+    function excluir($id) {
+        $comando = $this->conexao->prepare("DELETE FROM usuarios WHERE id_usuario=?");
+        return $comando->execute([$id]);
     }
 }
