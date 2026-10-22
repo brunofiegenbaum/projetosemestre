@@ -1,53 +1,51 @@
 <?php
 require_once "conexao.php";
-require_once "ClienteDAO.php";
+require_once "UsuarioDAO.php";
 require_once "VeiculoDAO.php";
 
 header("Content-Type: text/plain; charset=utf-8");
 
-$clienteDAO = new ClienteDAO($conexao);
+$usuarioDAO = new UsuarioDAO($conexao);
 $veiculoDAO = new VeiculoDAO($conexao);
 
-echo "PROJETO DO SEMESTRE - OFICINA MECÂNICA\n";
-echo "Teste da Sprint 1 (Banco + DAO)\n\n";
+echo "RUA. - COMPRA E VENDA DE VEÍCULOS\n";
+echo "SPRINT 1 - TESTE DO BANCO + DAO\n\n";
 
 try {
-    echo "1 - LISTAR CLIENTES\n";
-    print_r($clienteDAO->listar());
+    echo "1 - LISTAR USUÁRIOS\n";
+    print_r($usuarioDAO->listar());
 
-    echo "\n2 - LISTAR VEÍCULOS (COM O NOME DO CLIENTE)\n";
+    echo "\n2 - LISTAR ANÚNCIOS COM O NOME DO USUÁRIO\n";
     print_r($veiculoDAO->listar());
 
-    // Os registros criados aqui são apenas para demonstrar os métodos.
-    // No final, rollback desfaz tudo e mantém o banco com os 5 registros iniciais.
+    // Transação para não acumular anúncios de teste no banco.
     $conexao->beginTransaction();
 
-    echo "\n3 - INSERIR CLIENTE E VEÍCULO\n";
-    $id_cliente = $clienteDAO->inserir("Cliente Teste", "(51) 99999-9999");
-    $id_veiculo = $veiculoDAO->inserir($id_cliente, "Fiat", "Uno", 2002, "TST1E23");
-    echo "Cliente criado: $id_cliente\n";
-    echo "Veículo criado: $id_veiculo\n";
+    echo "\n3 - INSERIR USUÁRIO E VEÍCULO\n";
+    $id_usuario = $usuarioDAO->inserir("Usuário Teste", "teste@exemplo.test", "(51) 90000-9999");
+    $id_veiculo = $veiculoDAO->inserir($id_usuario, "Fiat", "Uno", 2012, 27000, 130000, "Lajeado", "RS", "Anúncio de teste");
+    echo "ID usuário: $id_usuario\n";
+    echo "ID veículo: $id_veiculo\n";
 
     echo "\n4 - BUSCAR POR ID\n";
-    print_r($clienteDAO->buscarPorId($id_cliente));
+    print_r($usuarioDAO->buscarPorId($id_usuario));
     print_r($veiculoDAO->buscarPorId($id_veiculo));
 
-    echo "\n5 - ATUALIZAR CLIENTE E VEÍCULO\n";
-    $clienteDAO->atualizar($id_cliente, "Cliente Atualizado", "(51) 98888-8888");
-    $veiculoDAO->atualizar($id_veiculo, $id_cliente, "Fiat", "Palio", 2003, "TST1E23");
-    print_r($clienteDAO->buscarPorId($id_cliente));
+    echo "\n5 - ATUALIZAR OS DOIS REGISTROS\n";
+    $usuarioDAO->atualizar($id_usuario, "Usuário Atualizado", "atualizado@exemplo.test", "(51) 90000-8888");
+    $veiculoDAO->atualizar($id_veiculo, $id_usuario, "Fiat", "Palio", 2013, 29900, 120000, "Estrela", "RS", "Anúncio atualizado");
+    print_r($usuarioDAO->buscarPorId($id_usuario));
     print_r($veiculoDAO->buscarPorId($id_veiculo));
 
-    echo "\n6 - EXCLUIR VEÍCULO E CLIENTE\n";
+    echo "\n6 - EXCLUIR VEÍCULO E DEPOIS O USUÁRIO\n";
     echo "Veículos excluídos: " . $veiculoDAO->excluir($id_veiculo) . "\n";
-    echo "Clientes excluídos: " . $clienteDAO->excluir($id_cliente) . "\n";
+    echo "Usuários excluídos: " . $usuarioDAO->excluir($id_usuario) . "\n";
 
     $conexao->rollBack();
-    echo "\nTESTE CONCLUÍDO! As alterações do teste foram desfeitas.\n";
+    echo "\nTUDO CERTO. As alterações do teste foram desfeitas.\n";
 } catch (Exception $erro) {
     if ($conexao->inTransaction()) {
         $conexao->rollBack();
     }
-
-    echo "\nErro ao executar teste: " . $erro->getMessage() . "\n";
+    echo "\nErro no teste: " . $erro->getMessage() . "\n";
 }
