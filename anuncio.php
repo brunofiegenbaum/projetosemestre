@@ -14,8 +14,9 @@ $veiculo = $dao->buscarPorId($id);
 <?php if ($veiculo) { ?>
 <h1><?php echo htmlspecialchars($veiculo["marca"] . " " . $veiculo["modelo"]); ?></h1>
 <div class="card">
-<div class="foto">🚗</div>
+<?php if (!empty($veiculo["foto"])) { ?><img class="foto-grande" src="<?php echo htmlspecialchars($veiculo["foto"]); ?>" alt="Foto do veículo"><?php } ?>
 <p>Ano: <?php echo $veiculo["ano"]; ?></p>
+<p>Quilometragem: <?php echo number_format($veiculo["quilometragem"], 0, ",", "."); ?> km</p>
 <h2>R$ <?php echo number_format($veiculo["preco"],2,",","."); ?></h2>
 <a href="anunciar.php?id=<?php echo $id; ?>">Editar</a> |
 <form method="post" action="excluir.php" onsubmit="return confirm('Excluir este veículo?')"><input type="hidden" name="id" value="<?php echo $id; ?>"><button type="submit">Excluir</button></form>
