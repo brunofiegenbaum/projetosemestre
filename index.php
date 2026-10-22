@@ -96,7 +96,7 @@ $veiculos = $veiculoDAO->listar($busca, $min, $max, $categoria, $ordem, $cidade)
                 <div class="sidebar-nav">
                     <a href="index.php" class="side-item <?php echo !$salvos ? 'active' : ''; ?>"><span class="side-icon">▣</span> Navegar por anúncios</a>
                     <a href="<?php echo esc(endereco(["salvos" => "1"])); ?>" class="side-item <?php echo $salvos ? 'active' : ''; ?>"><span class="side-icon">♡</span> Itens salvos</a>
-                    <a href="anunciar.php" class="side-item"><span class="side-icon">＋</span> Seus anúncios</a>
+                    <a href="anunciar.php" class="side-item"><span class="side-icon">＋</span> Anunciar veículo</a>
                 </div>
 
                 <a class="create-button" href="anunciar.php"><span>＋</span> Criar novo anúncio</a>
