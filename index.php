@@ -20,18 +20,19 @@ $veiculos = $dao->listar();
 <h1>Veículos à venda</h1>
 <p>Projeto de aula - anúncios de exemplo</p>
 <?php if (count($veiculos) == 0) { echo "<p>Nenhum veículo cadastrado ainda.</p>"; } ?>
-<div class="lista">
+<div class="tabela-veiculos"><table><thead><tr><th>Foto</th><th>Veículo</th><th>Ano</th><th>Km</th><th>Preço</th><th>Vendedor</th><th>Ações</th></tr></thead><tbody>
 <?php foreach ($veiculos as $veiculo) { ?>
-<div class="card">
-<div class="foto">🚗</div>
-<h3><?php echo htmlspecialchars($veiculo["marca"] . " " . $veiculo["modelo"]); ?></h3>
-<p>Ano: <?php echo $veiculo["ano"]; ?></p>
-<p>Vendedor: <?php echo htmlspecialchars($veiculo["nome"]); ?></p>
-<h2>R$ <?php echo number_format($veiculo["preco"], 2, ",", "."); ?></h2>
-<a href="anuncio.php?id=<?php echo $veiculo["id_veiculo"]; ?>">Ver detalhes</a>
-</div>
+<tr>
+<td><?php if ($veiculo["foto"]) { ?><img class="miniatura" src="<?php echo htmlspecialchars($veiculo["foto"]); ?>" alt="Foto do veículo"><?php } else { ?>Sem foto<?php } ?></td>
+<td><?php echo htmlspecialchars($veiculo["marca"] . " " . $veiculo["modelo"]); ?></td>
+<td><?php echo (int) $veiculo["ano"]; ?></td>
+<td><?php echo number_format($veiculo["quilometragem"], 0, ",", "."); ?> km</td>
+<td>R$ <?php echo number_format($veiculo["preco"], 2, ",", "."); ?></td>
+<td><?php echo htmlspecialchars($veiculo["nome"]); ?></td>
+<td><a href="anuncio.php?id=<?php echo $veiculo["id_veiculo"]; ?>">Ver</a> | <a href="anunciar.php?id=<?php echo $veiculo["id_veiculo"]; ?>">Editar</a></td>
+</tr>
 <?php } ?>
-</div>
+</tbody></table></div>
 </main>
 </body>
 </html>
