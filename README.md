@@ -1,129 +1,134 @@
-# RUA. — Compra e venda de veículos
+# Bruno e Jean - Projeto Semestre
 
-Projeto do semestre da disciplina **Desenvolvimento de Aplicações para Internet — Univates (2026)**.
+**Disciplina:** Desenvolvimento de Aplicações para Internet — Univates (2026)  
+**Integrantes:** Bruno Fiegenbaum e Jean (completar sobrenome).  
+**Tema:** Marketplace de compra e venda de veículos.
 
-**Tema:** plataforma de anúncios de compra e venda de veículos, com proposta visual jovem, escura e minimalista. Não é uma cópia de outro marketplace.
+O sistema foi inspirado no formato visual do Facebook Marketplace, com **modo escuro, barra superior, filtros no menu lateral, fotos e grade de anúncios**, mas usa o nome **Bruno e Jean - Projeto Semestre**.
 
-**Integrantes:** Bruno Fiegenbaum e **[preencher nome da dupla]**.
+## Sprint 1 — Banco de dados + DAO (22/10)
 
-## Sprint 1 — Banco + DAO (22/10/2026)
+O projeto tem **exatamente 2 tabelas**, ligadas pela chave estrangeira:
+- **usuarios:** id_usuario, nome, email, telefone.
+- **veiculos:** id_veiculo, id_usuario (FOREIGN KEY), marca, modelo, categoria, ano, preco, quilometragem, cidade, uf, descricao, foto_url, status.
 
-A Sprint 1 exige um banco MySQL com pelo menos duas tabelas relacionadas, cinco registros de teste em cada uma, conexão PDO, uma DAO para cada tabela e um script de demonstração.
+Um usuário pode publicar muitos veículos, mas cada veículo pertence a um usuário (relação **1:N**).
 
-### Banco de dados
+O arquivo `banco.sql` inclui **5 usuários** e **16 veículos de demonstração**. É permitido ter mais de cinco registros: o enunciado estabelece o **mínimo** de cinco em cada tabela. Dados e anúncios são fictícios; as fotos externas são meramente ilustrativas.
 
-**Banco:** `rua_veiculos`
+Os dois arquivos DAO (`UsuarioDAO.php` e `VeiculoDAO.php`) possuem:
+- `inserir()`
+- `listar()`
+- `buscarPorId()`
+- `atualizar()`
+- `excluir()`
 
-**Tabela pai: `usuarios`**
-- `id_usuario` (PRIMARY KEY)
-- `nome`, `email` e `telefone`
+Todas as consultas usam `prepare()` e `execute()`, com placeholders `?` para os dados.
 
-**Tabela filha: `veiculos`**
-- `id_veiculo` (PRIMARY KEY)
-- `id_usuario` (FOREIGN KEY para `usuarios.id_usuario`)
-- `marca`, `modelo`, `ano`, `preco`, `quilometragem`, `cidade`, `uf`, `descricao`, `status`
+## Arquivos do projeto
 
-**Relacionamento 1:N:** um usuário pode publicar vários veículos, mas cada veículo tem um único anunciante. Existem **exatamente 2 tabelas**, com **5 registros fictícios em cada uma**.
-
-### Arquivos
-
-| Arquivo | Função |
+| Arquivo | Para que serve |
 | --- | --- |
-| `banco.sql` | Cria o banco, as duas tabelas, a chave estrangeira e os dados de exemplo |
-| `conexao.php` | Conecta ao MySQL usando PDO |
-| `UsuarioDAO.php` | Inserir, listar, buscarPorId, atualizar e excluir usuários |
-| `VeiculoDAO.php` | Inserir, listar, buscarPorId, atualizar e excluir veículos; buscar anúncios por marca ou modelo |
-| `exemplo.php` | Demonstra as cinco operações dos dois DAOs |
-| `index.php` | Vitrine inicial com tema escuro e busca (prévia visual) |
-| `anuncio.php` | Página de detalhes de um veículo (prévia visual) |
-| `style.css` | Visual dark/minimalista responsivo, com CSS externo |
+| `banco.sql` | Cria banco `projetosemestre`, duas tabelas e os registros de demonstração |
+| `conexao.php` | Centraliza os dados de acesso MySQL e cria a conexão PDO |
+| `UsuarioDAO.php` | Operações com a tabela usuários |
+| `VeiculoDAO.php` | Operações com a tabela veículos e filtros de pesquisa |
+| `exemplo.php` | Apresentação dos DAOs com inserir, listar, buscar, editar e excluir |
+| `index.php` | Vitrine do Marketplace, com categorias, filtros, favoritos e busca |
+| `anuncio.php` | Detalhes de cada anúncio |
+| `anunciar.php` | Formulário de publicação, com escolha de usuário e validação básica |
+| `style.css` | Layout escuro, com menu lateral, cards e responsividade |
+| `script.js` | Controle dos favoritos no navegador e filtros no celular |
 
-As classes DAO usam **`prepare()` + `execute()`**. Os comandos que recebem valores têm parâmetros `?`, em vez de juntar dados do usuário diretamente ao SQL.
+## Como instalar e rodar com XAMPP (Windows)
 
-## Como rodar pelo XAMPP (Windows)
+**1. Ligar os serviços**
 
-### 1. Ligar o servidor
+Abra **XAMPP Control Panel**. Clique **Start** no **Apache** e **MySQL**. Os dois devem mostrar **Running**.
 
-Abra **XAMPP Control Panel** e clique em **Start** para:
-- **Apache** — executa as páginas PHP no navegador.
-- **MySQL** — guarda os registros dos veículos e usuários.
+**2. Baixar os arquivos**
 
-Os dois precisam estar com o status verde (**Running**).
-
-### 2. Baixar o projeto no lugar certo
-
-No PowerShell, execute:
+Abra PowerShell:
 
 ```powershell
 cd C:\xampp\htdocs
 git clone https://github.com/brunofiegenbaum/projetosemestre.git
 ```
 
-A pasta do projeto deverá ficar em:
+A pasta ficará em `C:\xampp\htdocs\projetosemestre`.
 
-```text
-C:\xampp\htdocs\projetosemestre
+**Se a pasta já existe e foi clonada do GitHub**, abra-a e atualize:
+
+```powershell
+cd C:\xampp\htdocs\projetosemestre
+git pull
 ```
 
-**Importante:** o repositório precisa estar dentro de `htdocs` para o Apache servir o PHP. Se a pasta já existir dentro de `htdocs`, abra-a e rode `git pull` em vez de clonar de novo. A pasta antiga na Área de Trabalho pode continuar lá, mas não é a que o XAMPP vai abrir automaticamente.
+Se a pasta local contém apenas um Git iniciado à parte e sem os arquivos do GitHub, prefira clonar o repositório em uma pasta nova (em vez de usar `git push --force`).
 
-### 3. Criar o banco de dados
+**3. Importar o banco SQL**
 
 1. Abra `http://localhost/phpmyadmin`.
-2. Na aba **Importar**, escolha `C:\xampp\htdocs\projetosemestre\banco.sql`.
-3. Clique em **Importar/Executar**.
-4. Na barra lateral do phpMyAdmin deve aparecer o banco `rua_veiculos`, com as tabelas `usuarios` e `veiculos`.
+2. Clique em **Importar**.
+3. Escolha `C:\xampp\htdocs\projetosemestre\banco.sql`.
+4. Clique em **Executar / Importar**.
+5. Confira na barra lateral o banco **projetosemestre** com as tabelas **usuarios** e **veiculos**.
 
-**Cuidado:** executar `banco.sql` novamente apaga e recria as duas tabelas. Faça isso apenas quando quiser reiniciar os dados de exemplo.
+**IMPORTANTE:** A versão anterior do projeto utilizava o banco `rua_veiculos`. Agora é `projetosemestre`. Você **precisa importar o banco.sql novo** mesmo que já tenha importado o arquivo da versão anterior. Este SQL recria as tabelas do banco `projetosemestre` e apaga qualquer dado que já estivesse nelas. Faça backup se tiver dados importantes.
 
-### 4. Conferir a conexão
+**4. Conferir a conexão**
 
-O arquivo `conexao.php` está configurado para a instalação padrão do XAMPP:
+O arquivo `conexao.php` usa a configuração padrão do XAMPP:
 
 ```php
 $servidor = "localhost";
-$banco = "rua_veiculos";
+$banco = "projetosemestre";
 $usuario = "root";
 $senha = "";
 ```
 
-Se você colocou uma senha no MySQL, modifique **somente** `conexao.php`.
+Caso seu MySQL tenha senha, altere **somente** esse arquivo.
 
-### 5. Abrir no navegador
+**5. Abrir o sistema**
 
-- **Site:** `http://localhost/projetosemestre/`
-- **Teste da Sprint 1:** `http://localhost/projetosemestre/exemplo.php`
-- **Detalhes do primeiro anúncio:** `http://localhost/projetosemestre/anuncio.php?id=1`
+- **Marketplace:** `http://localhost/projetosemestre/`
+- **Criar anúncio:** `http://localhost/projetosemestre/anunciar.php`
+- **Detalhe de um veículo:** `http://localhost/projetosemestre/anuncio.php?id=1`
+- **Script da Sprint 1:** `http://localhost/projetosemestre/exemplo.php`
 
-Na página de teste, você verá a listagem, inserção, consulta, atualização e exclusão de usuários e veículos. Os registros criados ali são desfeitos com `rollBack()` e não ficam gravados.
+Abra essas páginas pelo endereço `http://localhost`, não pelo Live Server ou pelo duplo clique em um arquivo PHP.
 
-**Não abra `index.php` pelo Explorador de Arquivos e não use Live Server no VS Code para executar PHP.** Abra pela URL `http://localhost` com Apache e MySQL ativos.
+## O que testar na apresentação de 22/10
 
-### Erros comuns
+1. No phpMyAdmin, abra as tabelas `usuarios` e `veiculos`. Mostre que `veiculos.id_usuario` referencia `usuarios.id_usuario`.
+2. Abra `conexao.php` e mostre o `new PDO`.
+3. Abra `UsuarioDAO.php` e `VeiculoDAO.php`. Apresente os cinco métodos e o uso de `prepare()` e `execute()`.
+4. Execute `http://localhost/projetosemestre/exemplo.php` para mostrar o CRUD das duas tabelas. O script usa transação e `rollBack()` para não salvar o teste.
+5. Se quiser, abra a página inicial e publique um novo veículo pelo formulário `anunciar.php`. Ele entra na listagem real do banco.
 
-- **404 / página não encontrada:** a pasta não está em `htdocs\projetosemestre` ou Apache não foi iniciado.
-- **Erro ao conectar:** o MySQL não está iniciado, o SQL não foi importado ou as credenciais estão diferentes.
-- **`could not find driver`:** extensão PHP `pdo_mysql` não está habilitada.
-- **Apache não inicia:** outra aplicação pode estar usando a porta 80. Verifique o log do XAMPP.
-- **`git clone` diz que a pasta já existe:** dentro da pasta certa use `git pull`, não `git clone` novamente.
+## Status dos requisitos do enunciado
 
-## Para apresentar a Sprint 1 em 5 minutos
+| Requisito | Status |
+| --- | --- |
+| Banco + mínimo 2 tabelas relacionadas com 5 registros por tabela | Implementado |
+| Conexão PDO | Implementado |
+| DAO completo para cada tabela | Implementado |
+| SQL com prepare + execute e ? | Implementado |
+| Script tipo exemplo.php | Implementado |
+| Catálogo visual, filtros e página de detalhes | Prévia funcional (PHP) |
+| Formulário de novo anúncio vinculado ao usuário | Prévia funcional (PHP) |
+| API REST em JSON com Bearer token e respostas HTTP | Pendente — Sprint 2 |
+| Testes das rotas em testes-api.sh | Pendente — Sprint 2 |
+| As quatro páginas consumindo API com fetch + async/await | Pendente — Sprint 3 |
+| Edição e exclusão pela interface com confirmação e mensagens | Pendente — Sprint 3/4 |
 
-1. No phpMyAdmin, mostrar as tabelas `usuarios` e `veiculos`, com 5 registros cada.
-2. Explicar que `veiculos.id_usuario` é uma chave estrangeira e faz o relacionamento 1:N.
-3. Abrir `conexao.php`, `UsuarioDAO.php` e `VeiculoDAO.php`. Mostrar os métodos e o uso de `prepare` e `execute`.
-4. Executar `exemplo.php` pelo navegador e explicar os testes.
-5. Se der tempo, mostrar o visual inicial em `index.php`.
+**Atenção:** os favoritos, por enquanto, ficam no `localStorage` do navegador, sem login. O formulário permite selecionar um usuário de demonstração, sem autenticação. Não use esta versão para anúncios reais/publicação na internet sem implementar autenticação e autorização.
 
-## Próximas etapas (PDF da atividade)
+## Próximas entregas
 
-- **05/11 — Sprint 2:** criar API REST JSON, GET (lista e por ID), POST, PUT, DELETE, token Bearer, validações e `testes-api.sh`.
-- **19/11 — Sprint 3:** criar as quatro páginas exigidas (início, listagem, cadastro e edição) em HTML/CSS/JS, consumindo API via `fetch` + `async/await`. Incluir `select` de usuários/anunciantes.
-- **26/11 — Sprint 4:** mensagens de erro e sucesso, confirmação para excluir, responsividade e revisão do README.
-- **03/12 — Entrega final.**
+- **05/11 — Sprint 2:** API REST JSON (GET, POST, PUT, DELETE), token Bearer, status HTTP, validação e testes-api.sh.
+- **19/11 — Sprint 3:** quatro telas com HTML/CSS/JS, `fetch` e `async/await`, tabela de listagem e formulários.
+- **26/11 — Sprint 4:** aperfeiçoamento da validação, mensagens, responsividade e README.
+- **03/12 — Apresentação final.**
 
-A **vitrine atual é apenas uma prévia funcional em PHP**: ela lista anúncios do MySQL, permite buscar e abrir detalhes, mas **a API JSON com token, o login e o CRUD via telas ainda não foram implementados**. A integração definitiva com `fetch` virá na Sprint 3.
-
-Os carros e usuários do SQL são **dados fictícios de demonstração**, não veículos à venda de verdade.
-
-**Link para entrega:** https://github.com/brunofiegenbaum/projetosemestre
+**Repositório:** https://github.com/brunofiegenbaum/projetosemestre
