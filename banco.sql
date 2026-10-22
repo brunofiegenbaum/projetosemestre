@@ -36,7 +36,7 @@ INSERT INTO clientes (nome, telefone) VALUES
 
 INSERT INTO veiculos (id_cliente, marca, modelo, ano, placa) VALUES
 (1, 'Volkswagen', 'Fusca', 1980, 'ABC1D23'),
-(2, 'Chevrolet', 'Corsa', 2005, 'DEF2G34'),
-(3, 'Fiat', 'Uno', 2010, 'GHI3J45'),
-(4, 'Ford', 'Ka', 2014, 'JKL4M56'),
-(5, 'Toyota', 'Corolla', 2017, 'MNO5P67');
+(1, 'Volkswagen', 'Gol', 1997, 'DEF2G34'),
+(2, 'Chevrolet', 'Corsa', 2005, 'GHI3J45'),
+(3, 'Fiat', 'Uno', 2010, 'JKL4M56'),
+(4, 'Toyota', 'Corolla', 2017, 'MNO5P67');
