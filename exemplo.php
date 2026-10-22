@@ -8,8 +8,8 @@ header("Content-Type: text/plain; charset=utf-8");
 $usuarioDAO = new UsuarioDAO($conexao);
 $veiculoDAO = new VeiculoDAO($conexao);
 
-echo "RUA. - COMPRA E VENDA DE VEÍCULOS\n";
-echo "SPRINT 1 - TESTE DO BANCO + DAO\n\n";
+echo "BRUNO E JEAN - PROJETO SEMESTRE\n";
+echo "SPRINT 1 - BANCO E DAO (MARKETPLACE DE VEÍCULOS)\n\n";
 
 try {
     echo "1 - LISTAR USUÁRIOS\n";
