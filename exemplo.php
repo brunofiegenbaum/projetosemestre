@@ -18,7 +18,7 @@ try {
     $conexao->beginTransaction();
     $usuarioDAO->inserir("Teste", "teste@exemplo.com");
     $idUsuario = $conexao->lastInsertId();
-    $veiculoDAO->inserir($idUsuario, "Fiat", "Uno", 2012, 20000);
+    $veiculoDAO->inserir($idUsuario, "Fiat", "Uno", 2012, 20000, 100000, null);
     $idVeiculo = $conexao->lastInsertId();
 
     echo "\nBUSCAR:\n";
@@ -26,7 +26,7 @@ try {
     print_r($veiculoDAO->buscarPorId($idVeiculo));
 
     $usuarioDAO->atualizar($idUsuario, "Teste Editado", "teste2@exemplo.com");
-    $veiculoDAO->atualizar($idVeiculo, $idUsuario, "Fiat", "Palio", 2013, 22000);
+    $veiculoDAO->atualizar($idVeiculo, $idUsuario, "Fiat", "Palio", 2013, 22000, 90000, null);
     echo "\nATUALIZAR:\n";
     print_r($veiculoDAO->buscarPorId($idVeiculo));
 
