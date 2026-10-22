@@ -6,7 +6,20 @@ $mensagem = "";
 $id = isset($_GET["id"]) ? (int) $_GET["id"] : 0;
 $usuario = $id ? $dao->buscarPorId($id) : false;
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["excluir"])) {
+    $idExcluir = (int) $_POST["excluir"];
+    if ($idExcluir > 0) {
+        $verificar = $conexao->prepare("SELECT COUNT(*) FROM veiculos WHERE id_usuario = ?");
+        $verificar->execute([$idExcluir]);
+        if ($verificar->fetchColumn() > 0) {
+            $mensagem = "Este usuário possui veículos cadastrados. Exclua os veículos antes de excluir o usuário.";
+        } else {
+            $dao->excluir($idExcluir);
+            header("Location: usuarios.php");
+            exit;
+        }
+    }
+} elseif ($_SERVER["REQUEST_METHOD"] == "POST") {
     $id = (int) ($_POST["id"] ?? 0);
     $nome = trim($_POST["nome"] ?? "");
     $email = trim($_POST["email"] ?? "");
@@ -31,6 +44,7 @@ $usuarios = $dao->listar();
 <header><h2>Bruno e Jean - Projeto Semestre</h2><nav><a href="index.php">Início</a> | <a href="usuarios.php">Usuários</a> | <a href="anunciar.php">Cadastrar veículo</a></nav></header>
 <main>
 <h1><?php echo $usuario ? "Editar usuário" : "Cadastrar usuário"; ?></h1>
+<?php if ($usuario) { ?><p><a href="usuarios.php">Cancelar edição</a></p><?php } ?>
 <?php if ($mensagem != "") echo "<p>" . htmlspecialchars($mensagem) . "</p>"; ?>
 <form method="post">
 <input type="hidden" name="id" value="<?php echo $usuario["id_usuario"] ?? 0; ?>">
@@ -50,7 +64,10 @@ $usuarios = $dao->listar();
 <tr>
 <td><?php echo htmlspecialchars($item["nome"]); ?></td>
 <td><?php echo htmlspecialchars($item["email"]); ?></td>
-<td><a href="usuarios.php?id=<?php echo $item["id_usuario"]; ?>">Editar</a></td>
+<td><a href="usuarios.php?id=<?php echo $item["id_usuario"]; ?>">Editar</a>
+<form class="excluir-usuario" method="post" onsubmit="return confirm('Deseja excluir este usuário?')">
+<button type="submit" name="excluir" value="<?php echo $item["id_usuario"]; ?>">Excluir</button>
+</form></td>
 </tr>
 <?php } ?>
 </table>
