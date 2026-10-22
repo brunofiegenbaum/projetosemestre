@@ -3,7 +3,7 @@ require_once "conexao.php";
 require_once "VeiculoDAO.php";
 
 $veiculoDAO = new VeiculoDAO($conexao);
-$busca = isset($_GET["busca"]) ? trim($_GET["busca"]) : "";
+$busca = isset($_GET["busca"]) && is_string($_GET["busca"]) ? trim($_GET["busca"]) : "";
 $busca = substr($busca, 0, 80);
 $veiculos = $veiculoDAO->listar($busca);
 
