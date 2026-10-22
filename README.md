@@ -1,79 +1,32 @@
-DESENVOLVIMENTO DE APLICAÇÕES PARA INTERNET · UNIVATES
-Projeto do Semestre — Sistema Web Completo
-Duplas · Início: 08/10/2026 · Apresentação final: 03/12/2026
+# Bruno e Jean - Projeto Semestre
 
-Ideia
-Construir um sistema web de cadastro e consulta sobre um tema escolhido pela dupla, juntando tudo
-que vimos até aqui:
-Front-end: HTML, CSS e JavaScript (como na Prova 1)
-API: PHP devolvendo JSON, protegida por token (como a API de clientes)
-Banco: MySQL acessado com PDO e classes DAO
-Integração: páginas que usam fetch para listar, cadastrar, editar e excluir (como na aula 4)
-Sugestões de tema (um tema por dupla, sem repetir)
-Biblioteca (autores → livros) Pet shop (tutores → animais) Academia (planos → alunos)
-Oficina (clientes → veículos) Restaurante (categorias → pratos) Eventos (eventos → inscrições)
-Clínica (médicos → consultas) Outro tema aprovado pelo professor
-Requisitos
-Banco de dados (MySQL)
-1. Arquivo banco.sql que cria o banco e as tabelas do zero.
-2. No mínimo 2 tabelas relacionadas (1:N) com chave estrangeira ( FOREIGN KEY ).
-3. Pelo menos 5 registros de exemplo em cada tabela ( INSERT ).
-Back-end (PHP)
-4. conexao.php com PDO (um único lugar com usuário/senha do banco).
-5. Uma classe DAO por tabela, com os métodos inserir , listar , buscarPorId , atualizar e
-excluir .
-6. Somente prepare + execute com ? nos SQLs que recebem dados do usuário (nada de concatenar
-variável no SQL).
-7. API REST que responde em JSON, com os métodos GET (todos e por ?id= ), POST , PUT e DELETE
-para a tabela principal.
-8. API exige Authorization: Bearer <token> e responde 401 sem token válido.
-9. Códigos HTTP corretos: 200, 201 (criado), 400 (dados inválidos), 401, 404 (não encontrado), 405
-(método não permitido).
-10. Validação no servidor: campos obrigatórios vazios retornam 400 com mensagem de erro (lembre da
-calculadora!).
-Front-end (HTML, CSS, JS)
-11. No mínimo 4 páginas: início, listagem, cadastro e edição.
-12. Header com menu e footer iguais em todas as páginas.
-13. CSS externo (sem style="" ), layout com Flexbox ou Grid e que funcione no celular.
-14. JavaScript com fetch + async/await consumindo a sua API.
+Projeto de aula em PHP, HTML, CSS e MySQL para cadastrar usuários e veículos.
 
-15. Listagem em tabela montada pelo JS, com botões Editar e Excluir em cada linha.
-16. Excluir pede confirmação ( confirm ) antes de chamar a API.
-17. Mensagens de sucesso/erro mostradas na página (sem alert para isso).
-18. Na tela de cadastro da tabela "filha", um <select> carregado pela API com os registros da tabela
-"pai".
-Entrega e organização
-19. testes-api.sh com os curl testando todas as rotas (incluindo os casos de erro).
-20. README.md com: tema, integrantes, como rodar, e onde está cada requisito.
-Cronograma (sprints)
-Data Sprint Entrega
-08/10 0 —
-Planejamento
+## Como executar
 
-Tema, dupla, modelo das tabelas, esboço das telas (em aula)
+1. Coloque a pasta `projetosemestre` dentro de `C:\xampp\htdocs`.
+2. Ligue o Apache e o MySQL no XAMPP.
+3. No phpMyAdmin, crie ou selecione o banco `projetosemestre`.
+4. Se estiver instalando do zero, importe `banco.sql`.
+5. Abra `http://localhost/projetosemestre/`.
 
-22/10 1 — Banco +
-DAO
+**Importante:** `banco.sql` é para criar o banco do zero. Não execute novamente em um banco com dados que deseja manter, pois o arquivo limpa os registros de veículos.
 
-banco.sql , conexao.php , DAOs funcionando (script de teste tipo
-exemplo.php )
+## Arquivos
 
-05/11 2 — API API completa com token + testes-api.sh passando
-19/11 3 — Front-end Páginas consumindo a API, layout pronto
-26/11 4 — Ajustes Validação, mensagens, responsividade, README
-03/12 Final Apresentação de 10 min por dupla + entrega do código
-Cada sprint é mostrada ao professor em aula (5 min por dupla). Sprint não apresentada perde a nota dela.
-Avaliação
-Item Peso
-Sprints 1 a 4 (acompanhamento) 30%
-Banco + DAO (req. 1–6) 15%
-API (req. 7–10, 19) 20%
-Front-end (req. 11–18) 20%
-Apresentação final + README 15%
-Na apresentação, os dois integrantes precisam saber explicar qualquer parte do código.
-Pergunta não respondida desconta do item correspondente.
-Pontos extras (até +1,0)
-Busca/filtro na listagem ( GET ?busca= ) feita no SQL com LIKE
-Login com tela própria gerando o token (em vez de token fixo)
-Paginação na listagem
-Publicado em um servidor acessível pela internet
+- `index.php`: lista de veículos.
+- `usuarios.php`: cadastro, listagem, edição e exclusão de usuários.
+- `anunciar.php`: cadastro e edição de veículos e envio de foto.
+- `anuncio.php`: detalhes de um veículo.
+- `excluir.php`: exclusão de veículo.
+- `conexao.php`: conexão com MySQL usando PDO.
+- `UsuarioDAO.php` e `VeiculoDAO.php`: consultas ao banco.
+- `style.css`: aparência do site.
+- `banco.sql`: tabelas e registros iniciais.
+- `exemplo.php`: teste básico do CRUD com transação para não deixar registros de teste.
+
+A pasta `fotos/` é criada pelo PHP quando uma imagem é enviada. Ela fica no computador onde o XAMPP está rodando.
+
+## Observação
+
+Esta versão é uma demonstração simples. A API com token, testes de API e telas que usam `fetch` ainda são etapas futuras do trabalho.
