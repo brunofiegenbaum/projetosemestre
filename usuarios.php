@@ -6,8 +6,8 @@ $mensagem = "";
 $id = isset($_GET["id"]) ? (int) $_GET["id"] : 0;
 $usuario = $id ? $dao->buscarPorId($id) : false;
 
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["excluir"])) {
-    $idExcluir = (int) $_POST["excluir"];
+if ($_SERVER["REQUEST_METHOD"] == "POST" && ($_POST["acao"] ?? "") == "excluir") {
+    $idExcluir = (int) ($_POST["id_excluir"] ?? 0);
     if ($idExcluir > 0) {
         $verificar = $conexao->prepare("SELECT COUNT(*) FROM veiculos WHERE id_usuario = ?");
         $verificar->execute([$idExcluir]);
@@ -66,7 +66,9 @@ $usuarios = $dao->listar();
 <td><?php echo htmlspecialchars($item["email"]); ?></td>
 <td><a href="usuarios.php?id=<?php echo $item["id_usuario"]; ?>">Editar</a>
 <form class="excluir-usuario" method="post" onsubmit="return confirm('Deseja excluir este usuário?')">
-<button type="submit" name="excluir" value="<?php echo $item["id_usuario"]; ?>">Excluir</button>
+<input type="hidden" name="acao" value="excluir">
+<input type="hidden" name="id_excluir" value="<?php echo $item["id_usuario"]; ?>">
+<button type="submit">Excluir</button>
 </form></td>
 </tr>
 <?php } ?>
