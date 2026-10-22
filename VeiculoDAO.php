@@ -15,13 +15,13 @@ class VeiculoDAO {
         $comando->execute([$id]);
         return $comando->fetch(PDO::FETCH_ASSOC);
     }
-    function inserir($id_usuario, $marca, $modelo, $ano, $preco) {
-        $comando = $this->conexao->prepare("INSERT INTO veiculos (id_usuario,marca,modelo,ano,preco) VALUES (?,?,?,?,?)");
-        return $comando->execute([$id_usuario,$marca,$modelo,$ano,$preco]);
+    function inserir($id_usuario, $marca, $modelo, $ano, $preco, $quilometragem, $foto) {
+        $comando = $this->conexao->prepare("INSERT INTO veiculos (id_usuario,marca,modelo,ano,preco,quilometragem,foto) VALUES (?,?,?,?,?,?,?)");
+        return $comando->execute([$id_usuario,$marca,$modelo,$ano,$preco,$quilometragem,$foto]);
     }
-    function atualizar($id, $id_usuario, $marca, $modelo, $ano, $preco) {
-        $comando = $this->conexao->prepare("UPDATE veiculos SET id_usuario=?,marca=?,modelo=?,ano=?,preco=? WHERE id_veiculo=?");
-        return $comando->execute([$id_usuario,$marca,$modelo,$ano,$preco,$id]);
+    function atualizar($id, $id_usuario, $marca, $modelo, $ano, $preco, $quilometragem, $foto) {
+        $comando = $this->conexao->prepare("UPDATE veiculos SET id_usuario=?,marca=?,modelo=?,ano=?,preco=?,quilometragem=?,foto=? WHERE id_veiculo=?");
+        return $comando->execute([$id_usuario,$marca,$modelo,$ano,$preco,$quilometragem,$foto,$id]);
     }
     function excluir($id) {
         $comando = $this->conexao->prepare("DELETE FROM veiculos WHERE id_veiculo=?");
