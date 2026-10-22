@@ -14,11 +14,12 @@ $veiculos = $dao->listar();
 <body>
 <header>
 <h2>Bruno e Jean - Projeto Semestre</h2>
-<nav><a href="index.php">Início</a> | <a href="anunciar.php">Cadastrar veículo</a></nav>
+<nav><a href="index.php">Início</a> | <a href="anunciar.php">Cadastrar veículo</a> | <a href="usuarios.php">Usuários</a></nav>
 </header>
 <main>
 <h1>Veículos à venda</h1>
 <p>Projeto de aula - anúncios de exemplo</p>
+<?php if (count($veiculos) == 0) { echo "<p>Nenhum veículo cadastrado ainda.</p>"; } ?>
 <div class="lista">
 <?php foreach ($veiculos as $veiculo) { ?>
 <div class="card">
