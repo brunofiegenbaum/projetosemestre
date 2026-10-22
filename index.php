@@ -3,136 +3,201 @@ require_once "conexao.php";
 require_once "VeiculoDAO.php";
 
 $veiculoDAO = new VeiculoDAO($conexao);
-$busca = isset($_GET["busca"]) && is_string($_GET["busca"]) ? trim($_GET["busca"]) : "";
-$busca = substr($busca, 0, 80);
-$veiculos = $veiculoDAO->listar($busca);
 
-function texto($valor) {
+function esc($valor) {
     return htmlspecialchars((string) $valor, ENT_QUOTES, "UTF-8");
 }
-
-function reais($valor) {
-    return "R$ " . number_format($valor, 2, ",", ".");
+function dinheiro($valor) {
+    return "R$ " . number_format((float) $valor, 0, ",", ".");
 }
+function param($nome) {
+    return isset($_GET[$nome]) && is_string($_GET[$nome]) ? trim($_GET[$nome]) : "";
+}
+function endereco($mudancas = []) {
+    $filtros = [];
+    foreach (["busca", "cidade", "min", "max", "categoria", "ordem", "salvos"] as $chave) {
+        $valor = param($chave);
+        if ($valor !== "") {
+            $filtros[$chave] = $valor;
+        }
+    }
+    foreach ($mudancas as $chave => $valor) {
+        if ($valor === "") {
+            unset($filtros[$chave]);
+        } else {
+            $filtros[$chave] = $valor;
+        }
+    }
+    return "index.php" . (count($filtros) ? "?" . http_build_query($filtros) : "");
+}
+
+$busca = substr(param("busca"), 0, 80);
+$cidade = substr(param("cidade"), 0, 80);
+$min = param("min");
+$max = param("max");
+$min = $min !== "" && is_numeric($min) && $min >= 0 ? (float) $min : null;
+$max = $max !== "" && is_numeric($max) && $max >= 0 ? (float) $max : null;
+$categoria = param("categoria");
+$categorias = ["Todos", "Hatches", "Sedãs", "SUVs", "Picapes", "Esportivos", "Clássicos"];
+if (!in_array($categoria, $categorias, true)) {
+    $categoria = "";
+}
+if ($categoria === "Todos") {
+    $categoria = "";
+}
+$ordem = param("ordem");
+$ordens = ["recentes", "menor_preco", "maior_preco", "mais_novos", "mais_antigos"];
+if (!in_array($ordem, $ordens, true)) {
+    $ordem = "recentes";
+}
+$salvos = param("salvos") === "1";
+$veiculos = $veiculoDAO->listar($busca, $min, $max, $categoria, $ordem, $cidade);
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="RUA. Uma nova forma de encontrar o seu próximo carro.">
-    <title>RUA. — Compra e venda de veículos</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Bruno e Jean - Projeto Semestre. Plataforma de anúncios de veículos.">
+    <title>Bruno e Jean - Projeto Semestre</title>
     <link rel="stylesheet" href="style.css">
+    <script defer src="script.js"></script>
 </head>
 <body>
-    <header class="site-header">
-        <div class="container header-content">
-            <a class="logo" href="index.php" aria-label="RUA, início">rua<span>.</span></a>
-            <nav aria-label="Menu principal">
-                <a class="nav-link active" href="index.php">Início</a>
-                <a class="nav-link" href="#anuncios">Explorar</a>
-            </nav>
-            <span class="header-soon">Anunciar <span>em breve</span></span>
+    <header class="topbar">
+        <div class="topbar-left">
+            <a href="index.php" class="brand-icon" aria-label="Página inicial">BJ</a>
+            <a href="index.php" class="brand-text">Bruno e Jean - Projeto Semestre</a>
+        </div>
+        <nav class="topbar-nav" aria-label="Navegação principal">
+            <a href="index.php" class="topbar-tab <?php echo !$salvos ? 'selected' : ''; ?>" aria-label="Explorar anúncios" title="Explorar anúncios"><span class="tab-ico">⌂</span><span>Início</span></a>
+            <a href="index.php" class="topbar-tab <?php echo !$salvos ? 'selected' : ''; ?>" aria-label="Veículos" title="Veículos"><span class="tab-ico">▣</span><span>Veículos</span></a>
+            <a href="<?php echo esc(endereco(["salvos" => "1"])); ?>" class="topbar-tab <?php echo $salvos ? 'selected' : ''; ?>" aria-label="Anúncios salvos" title="Anúncios salvos"><span class="tab-ico">♡</span><span>Salvos</span></a>
+        </nav>
+        <div class="topbar-right">
+            <a class="top-create" href="anunciar.php">+ <span>Criar anúncio</span></a>
+            <div class="user-avatar" title="Projeto Bruno e Jean">BJ</div>
         </div>
     </header>
 
-    <main>
-        <section class="hero container">
-            <div class="hero-copy">
-                <div class="eyebrow"><span class="eyebrow-dot"></span> FEITO PARA QUEM VIVE A ESTRADA</div>
-                <h1>O próximo capítulo começa <em>na direção.</em></h1>
-                <p>Do primeiro carro ao próximo sonho. Explore anúncios de veículos em um lugar simples, direto e sem enrolação.</p>
-                <a href="#anuncios" class="button-primary">Explorar veículos <span aria-hidden="true">↗</span></a>
-                <div class="hero-footnote">AUTOS / CULTURA / LIBERDADE <span>01 — 26</span></div>
+    <div class="layout">
+        <aside class="sidebar">
+            <div class="sidebar-heading">
+                <div class="eyebrow">COMPRA E VENDA</div>
+                <h1>Marketplace</h1>
             </div>
-            <div class="hero-visual" aria-hidden="true">
-                <div class="hero-visual-top"><span>RUA / GARAGEM</span><span>VOL. 01</span></div>
-                <div class="hero-glow"></div>
-                <svg class="hero-car" viewBox="0 0 600 250" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M61 174L107 159L167 94C181 79 201 70 230 68H397C426 68 443 79 461 98L509 148L544 158L563 179V198H530M91 198H65V179" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M177 102H392C411 102 423 108 436 124L456 148H132L177 102Z" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/>
-                    <path d="M306 102V148M143 160H446M91 198H530" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                    <circle cx="143" cy="197" r="31" fill="#101410" stroke="currentColor" stroke-width="4"/>
-                    <circle cx="143" cy="197" r="13" stroke="currentColor" stroke-width="3"/>
-                    <circle cx="479" cy="197" r="31" fill="#101410" stroke="currentColor" stroke-width="4"/>
-                    <circle cx="479" cy="197" r="13" stroke="currentColor" stroke-width="3"/>
-                    <path d="M543 163H558M70 169H90" stroke="currentColor" stroke-width="7" stroke-linecap="round"/>
-                </svg>
-                <div class="hero-visual-bottom"><span>ESCOLHA SEU CAMINHO.</span><span>↗</span></div>
-            </div>
-        </section>
-
-        <section class="listings" id="anuncios">
-            <div class="container">
-                <div class="section-top">
-                    <div>
-                        <span class="section-kicker">O QUE TEM NA GARAGEM</span>
-                        <h2>Encontre sua próxima máquina<span>.</span></h2>
-                    </div>
-                    <p>Seleção de anúncios de demonstração</p>
+            <form action="index.php" method="get" class="filter-form" id="filter-form">
+                <?php if ($salvos) { ?><input type="hidden" name="salvos" value="1"><?php } ?>
+                <div class="sidebar-search">
+                    <span class="search-symbol" aria-hidden="true">⌕</span>
+                    <input name="busca" type="search" maxlength="80" placeholder="Pesquisar no Marketplace" aria-label="Pesquisar anúncios" value="<?php echo esc($busca); ?>">
                 </div>
 
-                <form class="search-bar" method="get" action="index.php">
-                    <label for="busca">BUSCAR VEÍCULO</label>
-                    <div class="search-input-row">
-                        <input id="busca" name="busca" type="search" maxlength="80" placeholder="Marca ou modelo. Ex.: Golf, Civic, Volkswagen..." value="<?php echo texto($busca); ?>">
-                        <button type="submit">Buscar <span aria-hidden="true">↗</span></button>
-                    </div>
-                </form>
-
-                <div class="results-heading">
-                    <span><?php echo count($veiculos); ?> veículos encontrados</span>
-                    <?php if ($busca !== "") { ?>
-                        <a href="index.php#anuncios">Limpar busca ×</a>
-                    <?php } else { ?>
-                        <span class="results-muted">EXPLORAR / 2026</span>
-                    <?php } ?>
+                <div class="sidebar-nav">
+                    <a href="index.php" class="side-item <?php echo !$salvos ? 'active' : ''; ?>"><span class="side-icon">▣</span> Navegar por anúncios</a>
+                    <a href="<?php echo esc(endereco(["salvos" => "1"])); ?>" class="side-item <?php echo $salvos ? 'active' : ''; ?>"><span class="side-icon">♡</span> Itens salvos</a>
+                    <a href="anunciar.php" class="side-item"><span class="side-icon">＋</span> Seus anúncios</a>
                 </div>
 
-                <?php if (count($veiculos) === 0) { ?>
-                    <div class="empty-state">
-                        <h3>Nenhum carro por aqui.</h3>
-                        <p>Tente outra marca ou modelo para encontrar anúncios.</p>
-                        <a href="index.php#anuncios" class="button-primary">Ver todos os anúncios ↗</a>
+                <a class="create-button" href="anunciar.php"><span>＋</span> Criar novo anúncio</a>
+
+                <div class="sidebar-divider"></div>
+                <div class="filter-heading"><h2>Filtros</h2><a href="<?php echo $salvos ? 'index.php?salvos=1' : 'index.php'; ?>">Limpar</a></div>
+                <div class="location-hint"><span class="pin">●</span><span>Rio Grande do Sul · Brasil</span></div>
+
+                <div class="filter-group">
+                    <label for="cidade">Localização</label>
+                    <input type="text" name="cidade" id="cidade" maxlength="80" placeholder="Cidade, ex.: Lajeado" value="<?php echo esc($cidade); ?>">
+                </div>
+
+                <div class="filter-group">
+                    <span class="filter-label">Preço</span>
+                    <div class="price-fields">
+                        <input type="number" name="min" min="0" step="100" placeholder="Mín." aria-label="Preço mínimo" value="<?php echo $min !== null ? esc($min) : ''; ?>">
+                        <span>até</span>
+                        <input type="number" name="max" min="0" step="100" placeholder="Máx." aria-label="Preço máximo" value="<?php echo $max !== null ? esc($max) : ''; ?>">
                     </div>
-                <?php } else { ?>
-                    <div class="vehicle-grid">
-                        <?php foreach ($veiculos as $veiculo) { ?>
-                            <a class="vehicle-card" href="anuncio.php?id=<?php echo (int) $veiculo["id_veiculo"]; ?>">
-                                <div class="vehicle-image theme-<?php echo (int) $veiculo["id_veiculo"] % 5; ?>">
-                                    <span class="card-image-tag">RUA / AUTO</span>
-                                    <svg class="card-car" viewBox="0 0 320 130" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                                        <path d="M30 89L55 79L91 43L107 36H208L230 43L255 76L286 85L294 96V108H271M49 108H27V97" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/>
-                                        <path d="M105 49H206L221 77H77L105 49Z" stroke="currentColor" stroke-width="2"/>
-                                        <path d="M159 49V77" stroke="currentColor" stroke-width="2"/>
-                                        <circle cx="76" cy="108" r="17" fill="#161b1c" stroke="currentColor" stroke-width="3"/>
-                                        <circle cx="241" cy="108" r="17" fill="#161b1c" stroke="currentColor" stroke-width="3"/>
-                                    </svg>
-                                    <span class="card-image-arrow">↗</span>
-                                </div>
-                                <div class="vehicle-content">
-                                    <div class="vehicle-meta"><span><?php echo texto($veiculo["marca"]); ?></span><span><?php echo (int) $veiculo["ano"]; ?></span></div>
-                                    <h3><?php echo texto($veiculo["marca"] . " " . $veiculo["modelo"]); ?></h3>
-                                    <strong class="vehicle-price"><?php echo reais($veiculo["preco"]); ?></strong>
-                                    <div class="vehicle-bottom">
-                                        <span><?php echo number_format($veiculo["quilometragem"], 0, ",", "."); ?> km</span>
-                                        <span><?php echo texto($veiculo["cidade"] . " / " . $veiculo["uf"]); ?></span>
-                                    </div>
-                                </div>
-                            </a>
+                </div>
+
+                <div class="filter-group">
+                    <label for="categoria">Categoria</label>
+                    <select name="categoria" id="categoria">
+                        <?php foreach ($categorias as $item) { ?>
+                            <option value="<?php echo $item === 'Todos' ? '' : esc($item); ?>" <?php echo (($item === "Todos" && $categoria === "") || $categoria === $item) ? "selected" : ""; ?>><?php echo esc($item); ?></option>
                         <?php } ?>
-                    </div>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label for="ordem">Ordenar por</label>
+                    <select name="ordem" id="ordem">
+                        <option value="recentes" <?php echo $ordem === "recentes" ? "selected" : ""; ?>>Mais recentes</option>
+                        <option value="menor_preco" <?php echo $ordem === "menor_preco" ? "selected" : ""; ?>>Menor preço</option>
+                        <option value="maior_preco" <?php echo $ordem === "maior_preco" ? "selected" : ""; ?>>Maior preço</option>
+                        <option value="mais_novos" <?php echo $ordem === "mais_novos" ? "selected" : ""; ?>>Ano mais novo</option>
+                        <option value="mais_antigos" <?php echo $ordem === "mais_antigos" ? "selected" : ""; ?>>Ano mais antigo</option>
+                    </select>
+                </div>
+                <button class="apply-button" type="submit">Aplicar filtros</button>
+            </form>
+
+            <div class="sidebar-bottom">
+                <p>Trabalho acadêmico · anúncios demonstrativos</p>
+                <p>© 2026 Bruno e Jean - Projeto Semestre</p>
+            </div>
+        </aside>
+
+        <main class="market-content">
+            <div class="content-top">
+                <div>
+                    <p class="section-eyebrow">VEÍCULOS À VENDA</p>
+                    <h2><?php echo $salvos ? 'Seus anúncios salvos' : ($busca !== "" ? 'Resultados da pesquisa' : 'Sugestões para você'); ?></h2>
+                </div>
+                <span class="listing-total"><?php echo count($veiculos); ?> anúncios</span>
+            </div>
+            <div class="category-scroll" aria-label="Filtrar por categoria">
+                <?php foreach ($categorias as $item) {
+                    $valor = $item === "Todos" ? "" : $item;
+                ?>
+                    <a href="<?php echo esc(endereco(["categoria" => $valor])); ?>" class="category-chip <?php echo $categoria === $valor ? 'active' : ''; ?>"><?php echo esc($item); ?></a>
                 <?php } ?>
             </div>
-        </section>
-    </main>
+            <div class="results-title">
+                <div><strong><?php echo $salvos ? "Favoritos" : "Veículos disponíveis"; ?></strong><span> · <?php echo count($veiculos); ?> resultados</span></div>
+                <span class="demo-label">Anúncios fictícios para demonstração</span>
+            </div>
 
-    <footer class="site-footer">
-        <div class="container footer-content">
-            <a class="logo" href="index.php">rua<span>.</span></a>
-            <span>UMA NOVA FORMA DE ENCONTRAR SEU PRÓXIMO CARRO.</span>
-            <span>PROJETO DO SEMESTRE · UNIVATES · 2026</span>
-        </div>
-    </footer>
+            <?php if (count($veiculos) === 0) { ?>
+                <div class="market-empty"><h3>Nenhum anúncio encontrado</h3><p>Tente remover alguns filtros ou fazer uma nova busca.</p><a href="index.php">Ver todos os veículos</a></div>
+            <?php } else { ?>
+                <div class="market-grid" id="market-grid">
+                    <?php foreach ($veiculos as $veiculo) { ?>
+                        <article class="listing" data-id="<?php echo (int) $veiculo["id_veiculo"]; ?>">
+                            <a href="anuncio.php?id=<?php echo (int) $veiculo["id_veiculo"]; ?>" class="listing-link" aria-label="Ver anúncio de <?php echo esc($veiculo["marca"] . " " . $veiculo["modelo"]); ?>">
+                                <div class="listing-image">
+                                    <?php if (!empty($veiculo["foto_url"])) { ?>
+                                        <img loading="lazy" src="<?php echo esc($veiculo["foto_url"]); ?>" alt="Foto ilustrativa de automóvel" onerror="this.classList.add('image-failed')" />
+                                    <?php } ?>
+                                    <span class="listing-image-fallback">Sem foto disponível</span>
+                                </div>
+                                <div class="listing-details">
+                                    <div class="listing-price"><?php echo dinheiro($veiculo["preco"]); ?></div>
+                                    <h3><?php echo esc($veiculo["marca"] . " " . $veiculo["modelo"] . " " . $veiculo["ano"]); ?></h3>
+                                    <p><?php echo esc($veiculo["cidade"] . ", " . $veiculo["uf"]); ?></p>
+                                    <p class="listing-km"><?php echo number_format((int) $veiculo["quilometragem"], 0, ",", "."); ?> km · <?php echo esc($veiculo["categoria"]); ?></p>
+                                </div>
+                            </a>
+                            <button type="button" class="save-card" data-save="<?php echo (int) $veiculo["id_veiculo"]; ?>" aria-label="Salvar anúncio" title="Salvar anúncio">♡</button>
+                        </article>
+                    <?php } ?>
+                </div>
+                <div class="market-empty" id="empty-saved" hidden>
+                    <h3>Você ainda não salvou veículos.</h3>
+                    <p>Toque no coração de um anúncio para guardar seus favoritos neste navegador.</p>
+                    <a href="index.php">Explorar veículos</a>
+                </div>
+            <?php } ?>
+        </main>
+    </div>
 </body>
 </html>
