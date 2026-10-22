@@ -38,6 +38,13 @@
             if (!card.hidden) encontrados++;
         });
 
+        // A tela individual também tem botão de salvar.
+        document.querySelectorAll(".detail-action [data-save]").forEach(function (botao) {
+            var salvo = salvos.includes(String(botao.dataset.save));
+            botao.textContent = salvo ? "♥ Salvo" : "♡ Salvar";
+            botao.setAttribute("aria-pressed", salvo ? "true" : "false");
+        });
+
         var vazio = document.getElementById("empty-saved");
         if (vazio) vazio.hidden = !paginaSalvos || encontrados > 0;
 
