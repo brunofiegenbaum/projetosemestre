@@ -85,7 +85,7 @@ if (!$veiculo || $veiculo["status"] !== "disponivel") {
                         <div class="detail-divider"></div>
                         <h2>Informações do vendedor</h2>
                         <div class="seller">
-                            <div class="seller-avatar"><?php echo esc(mb_substr($veiculo["nome_usuario"], 0, 1, "UTF-8")); ?></div>
+                            <div class="seller-avatar"><?php echo esc(substr($veiculo["nome_usuario"], 0, 1)); ?></div>
                             <div><strong><?php echo esc($veiculo["nome_usuario"]); ?></strong><span>Usuário de demonstração</span></div>
                         </div>
                         <div class="seller-notice">Este é um projeto acadêmico. Os dados dos anúncios e vendedores são fictícios; não envie dinheiro nem tente contatar esses números.</div>
